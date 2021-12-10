@@ -46,7 +46,7 @@ func TestDQ1(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	blockFetcher, _ := NewBlockDelayQueue(dq).(*blockDelayQueueImpl)
+	blockFetcher, _ := NewBlockDelayQueueWithDQ(dq).(*blockDelayQueueImpl)
 
 	job, err := blockFetcher.jobBPopEx(time.Second, nil, "topic1", "topic2")
 	assert.Nil(t, err)
@@ -78,7 +78,7 @@ func TestDQ2(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	blockFetcher, _ := NewBlockDelayQueue(dq).(*blockDelayQueueImpl)
+	blockFetcher, _ := NewBlockDelayQueueWithDQ(dq).(*blockDelayQueueImpl)
 
 	job, err := blockFetcher.jobBPopEx(time.Second, nil, "topic1", "topic2")
 	assert.Nil(t, err)
@@ -157,7 +157,7 @@ func TestDQ3(t *testing.T) {
 
 	start := time.Now()
 
-	blockFetcher, _ := NewBlockDelayQueue(dq).(*blockDelayQueueImpl)
+	blockFetcher, _ := NewBlockDelayQueueWithDQ(dq).(*blockDelayQueueImpl)
 
 	go func() {
 		for {
@@ -224,7 +224,7 @@ func TestDQ4(t *testing.T) {
 		})
 		assert.Nil(t, err)
 
-		blockFetcher, _ := NewBlockDelayQueue(dq).(*blockDelayQueueImpl)
+		blockFetcher, _ := NewBlockDelayQueueWithDQ(dq).(*blockDelayQueueImpl)
 
 		var job *dqdef.Job
 		job, err = blockFetcher.jobBPopEx(time.Hour, nil, "topic")
@@ -260,7 +260,7 @@ func TestDQ5(t *testing.T) {
 
 	startTime := time.Now()
 
-	blockFetcher, _ := NewBlockDelayQueue(dq).(*blockDelayQueueImpl)
+	blockFetcher, _ := NewBlockDelayQueueWithDQ(dq).(*blockDelayQueueImpl)
 
 	for {
 		err := dq.JobPush(&dqdef.Job{

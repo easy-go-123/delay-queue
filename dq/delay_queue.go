@@ -15,6 +15,10 @@ func NewDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName strin
 	readyPool dqdef.ReadyPool, jobPool dqdef.JobPool, log logger.Wrapper) dqdef.DelayQueue {
 	ctx, cancel := context.WithCancel(ctx)
 
+	if log == nil {
+		log = logger.NewNopLoggerWrapper()
+	}
+
 	dq := &delayQueueImpl{
 		ctx:        ctx,
 		ctxCancel:  cancel,

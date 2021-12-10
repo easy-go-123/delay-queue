@@ -12,7 +12,7 @@ import (
 func testMakeBlockDelayQueue(ctx context.Context, t *testing.T) *blockDelayQueueImpl {
 	dq := testMakeDelayQueue(ctx, t)
 
-	return NewBlockDelayQueue(dq).(*blockDelayQueueImpl)
+	return NewBlockDelayQueueWithDQ(dq).(*blockDelayQueueImpl)
 }
 
 func TestBDQ5(t *testing.T) {

@@ -14,7 +14,7 @@ import (
 func NewBlockRedisDQ(ctx context.Context, redisCli *redis.Client, bucketName string,
 	log logger.Wrapper) dqdef.BlockDelayQueue {
 	return &blockRedisDQImpl{
-		bdq: dq.NewBlockDelayQueue(dq.NewDelayQueue(ctx, redisCli, bucketName, defaultimpl.NewRedisReadyQueue(ctx, redisCli),
+		bdq: dq.NewBlockDelayQueueWithDQ(dq.NewDelayQueue(ctx, redisCli, bucketName, defaultimpl.NewRedisReadyQueue(ctx, redisCli),
 			defaultimpl.NewRedisJobPool(redisCli, "job_"), log)),
 	}
 }

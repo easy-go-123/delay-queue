@@ -57,3 +57,11 @@ type BlockDelayQueue interface {
 	StopAndWait()
 	Wait()
 }
+
+type NotifyDelayQueue interface {
+	PushJob(job *Job) error
+	ReadyJobChannel() <-chan *Job
+
+	StopAndWait()
+	Wait()
+}
