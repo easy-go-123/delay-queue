@@ -17,11 +17,11 @@ func testMakeNotifyDelayQueue(ctx context.Context, t *testing.T) dqdef.NotifyDel
 	redisCli, err := helper.NewRedisClient(cfg.RedisDNS)
 	assert.Nil(t, err)
 
-	ks, _ := redisCli.Keys(context.Background(), "job*").Result()
-	redisCli.Del(context.Background(), ks...)
-	ks, _ = redisCli.Keys(context.Background(), "topic*").Result()
-	redisCli.Del(context.Background(), ks...)
-	redisCli.Del(context.Background(), "bucket1")
+	ks, _ := redisCli.Keys(ctx, "job*").Result()
+	redisCli.Del(ctx, ks...)
+	ks, _ = redisCli.Keys(ctx, "topic*").Result()
+	redisCli.Del(ctx, ks...)
+	redisCli.Del(ctx, "bucket1")
 
 	return NewNotifyDelayQueue(ctx, redisCli, "bucket1", "job_", 100,
 		logger.NewConsoleLoggerWrapper())

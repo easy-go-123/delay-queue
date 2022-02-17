@@ -7,6 +7,7 @@ import (
 
 	"github.com/easy-go-123/delay-queue/dqdef"
 	"github.com/go-redis/redis/v8"
+	"github.com/sgostarter/libeasygo/cuserror"
 	"github.com/sgostarter/libeasygo/helper"
 	"github.com/vmihailenco/msgpack"
 )
@@ -93,7 +94,16 @@ func (impl *redisJobPoolImpl) SaveJob(ctx context.Context, job *dqdef.Job, after
 
 func (impl *redisJobPoolImpl) RemoveJob(ctx context.Context, jobID string) (err error) {
 	return helper.RunWithTimeout4Redis(ctx, func(ctx context.Context) error {
-		return impl.redisCli.Del(ctx, impl.jobRedisKey(jobID)).Err()
+		var n int64
+		n, err = impl.redisCli.Del(ctx, impl.jobRedisKey(jobID)).Result()
+		if err != nil {
+			return nil
+		}
+		if n == 0 {
+			return cuserror.NewWithErrorMsg("not exists")
+		}
+
+		return nil
 	})
 }
 

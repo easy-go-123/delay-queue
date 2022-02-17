@@ -23,6 +23,10 @@ type blockRedisDQImpl struct {
 	bdq dqdef.BlockDelayQueue
 }
 
+func (impl *blockRedisDQImpl) GetDelayQueue() dqdef.DelayQueue {
+	return impl.bdq.GetDelayQueue()
+}
+
 func (impl *blockRedisDQImpl) PushJob(job *dqdef.Job) error {
 	return impl.bdq.PushJob(job)
 }
