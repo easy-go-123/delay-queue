@@ -24,12 +24,18 @@ type redisReadyQueueImpl struct {
 
 func (impl *redisReadyQueueImpl) NewReadyJob(topic, jobID string) (err error) {
 	return helper.RunWithTimeout4Redis(impl.ctx, func(ctx context.Context) error {
-		return impl.redisCli.RPush(ctx, topic, jobID).Err()
+		return impl.redisCli.RPush(ctx, "dqTopic:"+topic, jobID).Err()
 	})
 }
 
 func (impl *redisReadyQueueImpl) GetReadyJob(timeout time.Duration, topics ...string) (jid *dqdef.JobIdentify, err error) {
-	vs, err := impl.redisCli.BLPop(impl.ctx, timeout, topics...).Result()
+	redisTopics := make([]string, len(topics))
+
+	for idx, topic := range topics {
+		redisTopics[idx] = "dqTopic:" + topic
+	}
+
+	vs, err := impl.redisCli.BLPop(impl.ctx, timeout, redisTopics...).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
 			err = nil

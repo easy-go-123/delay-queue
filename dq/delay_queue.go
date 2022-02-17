@@ -23,7 +23,7 @@ func NewDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName strin
 		ctx:        ctx,
 		ctxCancel:  cancel,
 		redisCli:   redisCli,
-		bucketName: bucketName,
+		bucketName: "dqBucket:" + bucketName,
 		readyPool:  readyPool,
 		jobPool:    jobPool,
 		log:        log,
