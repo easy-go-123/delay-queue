@@ -56,6 +56,8 @@ type BlockDelayQueue interface {
 
 	StopAndWait()
 	Wait()
+
+	GetDelayQueue() DelayQueue
 }
 
 type NotifyDelayQueue interface {
