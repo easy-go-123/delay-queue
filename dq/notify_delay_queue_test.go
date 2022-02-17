@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/easy-go-123/delay-queue/dqdef"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libeasygo/helper"
 	"github.com/sgostarter/libeasygo/ut"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +24,7 @@ func testMakeNotifyDelayQueue(ctx context.Context, t *testing.T) dqdef.NotifyDel
 	redisCli.Del(ctx, "bucket1")
 
 	return NewNotifyDelayQueue(ctx, redisCli, "bucket1", "job_", 100,
-		logger.NewConsoleLoggerWrapper())
+		l.NewConsoleLoggerWrapper())
 }
 
 func TestNQ3(t *testing.T) {

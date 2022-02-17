@@ -45,7 +45,7 @@ func testMakeDelayQueue(ctx context.Context, t *testing.T) dqdef.BlockDelayQueue
 	redisCli.Del(context.Background(), "bucket1")
 
 	return NewBlockRedisDQ(ctx, redisCli, "bucket1",
-		logger.NewWrapper(logger.NewCommLogger(&logger.FmtRecorder{})))
+		l.NewWrapper(l.NewCommLogger(&l.FmtRecorder{})))
 }
 
 func Test1(t *testing.T) {

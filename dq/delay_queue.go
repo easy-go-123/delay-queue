@@ -7,16 +7,16 @@ import (
 
 	"github.com/easy-go-123/delay-queue/dqdef"
 	"github.com/go-redis/redis/v8"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libeasygo/helper"
 )
 
 func NewDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName string,
-	readyPool dqdef.ReadyPool, jobPool dqdef.JobPool, log logger.Wrapper) dqdef.DelayQueue {
+	readyPool dqdef.ReadyPool, jobPool dqdef.JobPool, log l.Wrapper) dqdef.DelayQueue {
 	ctx, cancel := context.WithCancel(ctx)
 
 	if log == nil {
-		log = logger.NewNopLoggerWrapper()
+		log = l.NewNopLoggerWrapper()
 	}
 
 	dq := &delayQueueImpl{
@@ -43,7 +43,7 @@ type delayQueueImpl struct {
 	bucketName string
 	readyPool  dqdef.ReadyPool
 	jobPool    dqdef.JobPool
-	log        logger.Wrapper
+	log        l.Wrapper
 	newJobChan chan interface{}
 }
 
@@ -97,7 +97,7 @@ func (dq *delayQueueImpl) startCheckRoutine() {
 	go func() {
 		defer dq.wg.Done()
 
-		log := dq.log.WithFields(logger.FieldString("clsModule", "checkRoutine"))
+		log := dq.log.WithFields(l.FieldString("clsModule", "checkRoutine"))
 		log.Info("enterCheckRoutine")
 
 		defer log.Info("leaveCheckRoutine")
@@ -107,7 +107,7 @@ func (dq *delayQueueImpl) startCheckRoutine() {
 
 		for loop {
 			if duration > time.Second {
-				log.WithFields(logger.FieldString("duration", duration.String())).Debug("duration")
+				log.WithFields(l.FieldString("duration", duration.String())).Debug("duration")
 			}
 
 			select {
@@ -122,7 +122,7 @@ func (dq *delayQueueImpl) startCheckRoutine() {
 				if err != nil {
 					duration = time.Second
 
-					log.WithFields(logger.FieldError("err", err)).Error("processFailed")
+					log.WithFields(l.FieldError("err", err)).Error("processFailed")
 
 					continue
 				}
@@ -136,7 +136,7 @@ func (dq *delayQueueImpl) startCheckRoutine() {
 	}()
 }
 
-func (dq *delayQueueImpl) processDelayQueueData(log logger.Wrapper) (time.Duration, error) {
+func (dq *delayQueueImpl) processDelayQueueData(log l.Wrapper) (time.Duration, error) {
 	for {
 		var item *bucketItem
 		item, err := dq.getFromDelayQueue()
@@ -173,7 +173,7 @@ func (dq *delayQueueImpl) processDelayQueueData(log logger.Wrapper) (time.Durati
 
 		err = dq.readyPool.NewReadyJob(job.Topic, job.ID)
 		if err != nil {
-			log.WithFields(logger.FieldError("err", err)).Error("saveJob2ReadyPool")
+			log.WithFields(l.FieldError("err", err)).Error("saveJob2ReadyPool")
 
 			return 0, err
 		}
@@ -187,12 +187,12 @@ func (dq *delayQueueImpl) processDelayQueueData(log logger.Wrapper) (time.Durati
 			})
 
 			if err != nil {
-				log.WithFields(logger.FieldError("err", err)).Error("updateJob")
+				log.WithFields(l.FieldError("err", err)).Error("updateJob")
 			}
 		} else {
 			err = dq.removeFromDelayQueue(item.jobID)
 			if err != nil {
-				log.WithFields(logger.FieldError("err", err)).Error("updateJob")
+				log.WithFields(l.FieldError("err", err)).Error("updateJob")
 			}
 		}
 	}
@@ -207,7 +207,7 @@ func (dq *delayQueueImpl) save2DelayQueue(job *dqdef.Job) (err error) {
 	})
 
 	if err != nil {
-		dq.log.WithFields(logger.FieldError("err", err)).Error("saveJob2DelayQueue")
+		dq.log.WithFields(l.FieldError("err", err)).Error("saveJob2DelayQueue")
 	}
 
 	return
@@ -219,7 +219,7 @@ func (dq *delayQueueImpl) removeFromDelayQueue(jobID string) (err error) {
 	})
 
 	if err != nil {
-		dq.log.WithFields(logger.FieldError("err", err)).Error("removeJobFromDelayQueue")
+		dq.log.WithFields(l.FieldError("err", err)).Error("removeJobFromDelayQueue")
 	}
 
 	return
@@ -235,7 +235,7 @@ func (dq *delayQueueImpl) getFromDelayQueue() (bi *bucketItem, err error) {
 	})
 
 	if err != nil {
-		dq.log.WithFields(logger.FieldError("err", err)).Error("getJobFromDelayQueue")
+		dq.log.WithFields(l.FieldError("err", err)).Error("getJobFromDelayQueue")
 
 		return
 	}

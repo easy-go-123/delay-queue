@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/go-redis/redis/v8 v8.11.4
-	github.com/sgostarter/i v0.0.4
+	github.com/sgostarter/i v0.1.1
 	github.com/sgostarter/libeasygo v0.0.2
 	github.com/stretchr/testify v1.7.0
 	github.com/vmihailenco/msgpack v4.0.4+incompatible

@@ -9,7 +9,7 @@ import (
 
 	"github.com/easy-go-123/delay-queue/dq/defaultimpl"
 	"github.com/easy-go-123/delay-queue/dqdef"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libeasygo/helper"
 	"github.com/sgostarter/libeasygo/ut"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +28,7 @@ func testMakeDelayQueue(ctx context.Context, t *testing.T) *delayQueueImpl {
 
 	return NewDelayQueue(ctx, redisCli, "bucket1",
 		defaultimpl.NewRedisReadyQueue(ctx, redisCli), defaultimpl.NewRedisJobPool(redisCli, "job_"),
-		logger.NewWrapper(logger.NewCommLogger(&logger.FmtRecorder{}))).(*delayQueueImpl)
+		l.NewWrapper(l.NewCommLogger(&l.FmtRecorder{}))).(*delayQueueImpl)
 }
 
 func TestDQ1(t *testing.T) {

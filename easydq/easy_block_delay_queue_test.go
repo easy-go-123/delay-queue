@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/easy-go-123/delay-queue/dqdef"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libeasygo/helper"
 	"github.com/sgostarter/libeasygo/ut"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +24,7 @@ func testMakeDelayQueue(ctx context.Context, t *testing.T) dqdef.BlockDelayQueue
 	redisCli.Del(ctx, "bucket1")
 
 	return NewBlockRedisDQ(ctx, redisCli, "bucket1",
-		logger.NewWrapper(logger.NewCommLogger(&logger.FmtRecorder{})))
+		l.NewWrapper(l.NewCommLogger(&l.FmtRecorder{})))
 }
 
 func Test1(t *testing.T) {
