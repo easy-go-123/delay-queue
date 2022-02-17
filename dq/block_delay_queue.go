@@ -7,11 +7,11 @@ import (
 	"github.com/easy-go-123/delay-queue/dq/defaultimpl"
 	"github.com/easy-go-123/delay-queue/dqdef"
 	"github.com/go-redis/redis/v8"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 )
 
 func NewBlockDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName, jobPrefix string,
-	log logger.Wrapper) dqdef.BlockDelayQueue {
+	log l.Wrapper) dqdef.BlockDelayQueue {
 	if ctx == nil || redisCli == nil || bucketName == "" || jobPrefix == "" {
 		return nil
 	}

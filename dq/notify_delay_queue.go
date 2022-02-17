@@ -7,13 +7,13 @@ import (
 	"github.com/easy-go-123/delay-queue/dq/defaultimpl"
 	"github.com/easy-go-123/delay-queue/dqdef"
 	"github.com/go-redis/redis/v8"
-	"github.com/sgostarter/i/logger"
+	"github.com/sgostarter/i/l"
 )
 
 func NewNotifyDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName, jobPrefix string,
-	maxCap int, log logger.Wrapper) dqdef.NotifyDelayQueue {
+	maxCap int, log l.Wrapper) dqdef.NotifyDelayQueue {
 	if log == nil {
-		log = logger.NewNopLoggerWrapper()
+		log = l.NewNopLoggerWrapper()
 	}
 
 	if ctx == nil || redisCli == nil || bucketName == "" || jobPrefix == "" {
@@ -26,7 +26,7 @@ func NewNotifyDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName
 	return NewNotifyDelayQueueWithDQ(ctx, dq, maxCap, log)
 }
 
-func NewNotifyDelayQueueWithDQ(ctx context.Context, dq dqdef.DelayQueue, maxCap int, log logger.Wrapper) dqdef.NotifyDelayQueue {
+func NewNotifyDelayQueueWithDQ(ctx context.Context, dq dqdef.DelayQueue, maxCap int, log l.Wrapper) dqdef.NotifyDelayQueue {
 	if dq == nil || dq.GetReadyPool() == nil {
 		return nil
 	}
@@ -41,7 +41,7 @@ func NewNotifyDelayQueueWithDQ(ctx context.Context, dq dqdef.DelayQueue, maxCap 
 	ctx, cancel := context.WithCancel(ctx)
 
 	if log == nil {
-		log = logger.NewNopLoggerWrapper()
+		log = l.NewNopLoggerWrapper()
 	}
 
 	impl := &notifyDelayQueueImpl{
@@ -64,7 +64,7 @@ type notifyDelayQueueImpl struct {
 	wg        sync.WaitGroup
 	ctx       context.Context
 	ctxCancel context.CancelFunc
-	log       logger.Wrapper
+	log       l.Wrapper
 
 	dq        dqdef.DelayQueue
 	rpFetcher dqdef.ReadyPoolNotifier
@@ -72,7 +72,7 @@ type notifyDelayQueueImpl struct {
 }
 
 func (impl *notifyDelayQueueImpl) routine() {
-	log := impl.log.WithFields(logger.FieldString("clsModule", "routine"))
+	log := impl.log.WithFields(l.FieldString("clsModule", "routine"))
 
 	defer func() {
 		impl.wg.Done()
@@ -91,7 +91,7 @@ func (impl *notifyDelayQueueImpl) routine() {
 		case ji := <-impl.rpFetcher.JobChan():
 			job, err := impl.dq.GetJobPool().GetJob(impl.ctx, ji.ID, nil)
 			if err != nil {
-				log.WithFields(logger.FieldError("err", err)).Error("getJob")
+				log.WithFields(l.FieldError("err", err)).Error("getJob")
 
 				continue
 			}
@@ -99,7 +99,7 @@ func (impl *notifyDelayQueueImpl) routine() {
 			err = impl.dq.GetJobPool().RemoveJob(impl.ctx, ji.ID)
 
 			if err != nil {
-				log.WithFields(logger.FieldError("err", err)).Error("removeJob")
+				log.WithFields(l.FieldError("err", err)).Error("removeJob")
 			}
 
 			if job != nil {
