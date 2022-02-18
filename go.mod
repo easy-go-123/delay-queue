@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/go-redis/redis/v8 v8.11.4
-	github.com/sgostarter/i v0.1.1
-	github.com/sgostarter/libeasygo v0.0.2
+	github.com/sgostarter/i v0.1.3
+	github.com/sgostarter/libeasygo v0.0.7
 	github.com/stretchr/testify v1.7.0
 	github.com/vmihailenco/msgpack v4.0.4+incompatible
 )
@@ -17,7 +17,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/sgostarter/libconfig v0.0.0-20211202024359-06f35854e6cc // indirect
+	github.com/sgostarter/libconfig v0.0.0-20211221083720-b4e6c5547d3f // indirect
 	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
