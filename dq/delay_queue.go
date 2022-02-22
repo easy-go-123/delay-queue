@@ -86,7 +86,7 @@ func (dq *delayQueueImpl) JobPush(job *dqdef.Job) error {
 }
 
 func (dq *delayQueueImpl) JobDone(jobID string) {
-	_ = dq.jobPool.RemoveJob(dq.ctx, jobID)
+	_ = dq.jobPool.RemoveJobByDQ(dq.ctx, jobID)
 	_ = dq.removeFromDelayQueue(jobID)
 	dq.newJobChan <- true
 }

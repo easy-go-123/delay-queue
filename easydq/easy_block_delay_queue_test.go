@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/easy-go-123/delay-queue/dq/defaultimpl"
 	"github.com/easy-go-123/delay-queue/dqdef"
 	"github.com/sgostarter/i/l"
 	"github.com/sgostarter/libeasygo/helper"
@@ -116,4 +117,49 @@ func Test2(t *testing.T) {
 	}
 
 	bdq.StopAndWait()
+}
+
+func Test3(t *testing.T) {
+	ctx := context.Background()
+
+	cfg := ut.SetupUTConfig4Redis(t)
+	redisCli, err := helper.NewRedisClient(cfg.RedisDNS)
+	assert.Nil(t, err)
+
+	ks, _ := redisCli.Keys(ctx, "job*").Result()
+	redisCli.Del(ctx, ks...)
+	ks, _ = redisCli.Keys(ctx, "topic*").Result()
+	redisCli.Del(ctx, ks...)
+	redisCli.Del(ctx, "bucket1")
+
+	dq := NewNoDataBlockRedisDQ(ctx, redisCli, "bucket1",
+		l.NewWrapper(l.NewCommLogger(&l.FmtRecorder{})))
+
+	err = dq.PushJob(&dqdef.Job{
+		Topic: defaultimpl.NoDataJobTopic,
+		ID:    "1:1",
+		Delay: time.Now().Add(time.Second),
+	})
+	assert.Nil(t, err)
+
+	err = dq.PushJob(&dqdef.Job{
+		Topic: "1",
+		ID:    "1:2",
+		Delay: time.Now().Add(time.Second),
+	})
+	assert.NotNil(t, err)
+
+	err = dq.PushJob(&dqdef.Job{
+		Topic: "",
+		ID:    "1:2",
+		Delay: time.Now().Add(time.Second),
+		TTR:   time.Second,
+	})
+	assert.NotNil(t, err)
+
+	ok, err := dq.BlockProcessJobOnce(func(job *dqdef.Job) (newJob *dqdef.Job, err error) {
+		return
+	}, time.Second*10, nil, defaultimpl.NoDataJobTopic)
+	assert.Nil(t, err)
+	assert.True(t, ok)
 }

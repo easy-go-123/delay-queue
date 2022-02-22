@@ -96,7 +96,7 @@ func (impl *notifyDelayQueueImpl) routine() {
 				continue
 			}
 
-			err = impl.dq.GetJobPool().RemoveJob(impl.ctx, ji.ID)
+			err = impl.dq.GetJobPool().RemoveJobByDQ(impl.ctx, ji.ID)
 
 			if err != nil {
 				log.WithFields(l.FieldError("err", err)).Error("removeJob")

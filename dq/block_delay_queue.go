@@ -76,6 +76,7 @@ func (impl *blockDelayQueueImpl) BlockProcessJobOnce(f dqdef.FNProcessJob, timeo
 	}
 
 	ok = true
+	// nolint: ifshort
 	jobID := job.ID
 	newJob, err := f(job)
 
@@ -83,9 +84,15 @@ func (impl *blockDelayQueueImpl) BlockProcessJobOnce(f dqdef.FNProcessJob, timeo
 		return
 	}
 
-	impl.dq.JobDone(jobID)
-
-	if newJob != nil {
+	if newJob == nil {
+		impl.dq.JobDone(jobID)
+	} else if newJob.ID != jobID {
+		err = impl.dq.JobPush(newJob)
+		if err != nil {
+			return
+		}
+		impl.dq.JobDone(jobID)
+	} else {
 		err = impl.dq.JobPush(newJob)
 	}
 

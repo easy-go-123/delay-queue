@@ -92,7 +92,7 @@ func (impl *redisJobPoolImpl) SaveJob(ctx context.Context, job *dqdef.Job, after
 	return err
 }
 
-func (impl *redisJobPoolImpl) RemoveJob(ctx context.Context, jobID string) (err error) {
+func (impl *redisJobPoolImpl) RemoveJobByDQ(ctx context.Context, jobID string) (err error) {
 	return helper.RunWithTimeout4Redis(ctx, func(ctx context.Context) error {
 		var n int64
 		n, err = impl.redisCli.Del(ctx, impl.jobRedisKey(jobID)).Result()
@@ -105,6 +105,10 @@ func (impl *redisJobPoolImpl) RemoveJob(ctx context.Context, jobID string) (err 
 
 		return nil
 	})
+}
+
+func (impl *redisJobPoolImpl) RemoveJob(ctx context.Context, jobID string) (err error) {
+	return impl.RemoveJobByDQ(ctx, jobID)
 }
 
 func (impl *redisJobPoolImpl) jobRedisKey(jobID string) string {

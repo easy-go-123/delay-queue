@@ -8,6 +8,8 @@ import (
 type JobPool interface {
 	SaveJob(ctx context.Context, job *Job, afterHook func() error) (err error)
 	GetJob(ctx context.Context, jobID string, jobIn *Job) (job *Job, err error)
+	// RemoveJobByDQ FIXME hide it.
+	RemoveJobByDQ(ctx context.Context, jobID string) (err error)
 	RemoveJob(ctx context.Context, jobID string) (err error)
 }
 
