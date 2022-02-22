@@ -10,14 +10,14 @@ import (
 	"github.com/sgostarter/i/l"
 )
 
-func NewBlockDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName, jobPrefix string,
+func NewBlockDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName string,
 	log l.Wrapper) dqdef.BlockDelayQueue {
-	if ctx == nil || redisCli == nil || bucketName == "" || jobPrefix == "" {
+	if ctx == nil || redisCli == nil || bucketName == "" {
 		return nil
 	}
 
 	dq := NewDelayQueue(ctx, redisCli, bucketName, defaultimpl.NewRedisReadyQueue(ctx, redisCli),
-		defaultimpl.NewRedisJobPool(redisCli, jobPrefix), log)
+		defaultimpl.NewRedisJobPool(redisCli), log)
 
 	return NewBlockDelayQueueWithDQ(dq)
 }
@@ -76,7 +76,7 @@ func (impl *blockDelayQueueImpl) BlockProcessJobOnce(f dqdef.FNProcessJob, timeo
 	}
 
 	ok = true
-	// nolint: ifshort
+
 	jobID := job.ID
 	newJob, err := f(job)
 

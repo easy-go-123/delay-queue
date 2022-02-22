@@ -12,16 +12,19 @@ import (
 	"github.com/vmihailenco/msgpack"
 )
 
-func NewRedisJobPool(redisCli *redis.Client, jobPrefix string) dqdef.JobPool {
+func NewRedisJobPool(redisCli *redis.Client) dqdef.JobPool {
 	return &redisJobPoolImpl{
-		redisCli:  redisCli,
-		jobPrefix: jobPrefix,
+		redisCli: redisCli,
 	}
 }
 
 type redisJobPoolImpl struct {
-	redisCli  *redis.Client
-	jobPrefix string
+	redisCli *redis.Client
+	dqName   string
+}
+
+func (impl *redisJobPoolImpl) SetDelayQueueName(name string) {
+	impl.dqName = name
 }
 
 func (impl *redisJobPoolImpl) GetJob(ctx context.Context, jobID string, jobIn *dqdef.Job) (job *dqdef.Job, err error) {
@@ -112,5 +115,5 @@ func (impl *redisJobPoolImpl) RemoveJob(ctx context.Context, jobID string) (err 
 }
 
 func (impl *redisJobPoolImpl) jobRedisKey(jobID string) string {
-	return impl.jobPrefix + jobID
+	return "dqJob:" + impl.dqName + ":" + jobID
 }

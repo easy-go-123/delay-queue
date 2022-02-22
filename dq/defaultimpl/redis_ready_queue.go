@@ -20,19 +20,28 @@ func NewRedisReadyQueue(ctx context.Context, redisCli *redis.Client) dqdef.Ready
 type redisReadyQueueImpl struct {
 	ctx      context.Context
 	redisCli *redis.Client
+	dqName   string
+}
+
+func (impl *redisReadyQueueImpl) SetDelayQueueName(name string) {
+	impl.dqName = name
 }
 
 func (impl *redisReadyQueueImpl) NewReadyJob(topic, jobID string) (err error) {
 	return helper.RunWithTimeout4Redis(impl.ctx, func(ctx context.Context) error {
-		return impl.redisCli.RPush(ctx, "dqTopic:"+topic, jobID).Err()
+		return impl.redisCli.RPush(ctx, impl.toRealTopic(topic), jobID).Err()
 	})
+}
+
+func (impl *redisReadyQueueImpl) toRealTopic(topic string) string {
+	return "dqTopic:" + impl.dqName + ":" + topic
 }
 
 func (impl *redisReadyQueueImpl) GetReadyJob(timeout time.Duration, topics ...string) (jid *dqdef.JobIdentify, err error) {
 	redisTopics := make([]string, len(topics))
 
 	for idx, topic := range topics {
-		redisTopics[idx] = "dqTopic:" + topic
+		redisTopics[idx] = impl.toRealTopic(topic)
 	}
 
 	vs, err := impl.redisCli.BLPop(impl.ctx, timeout, redisTopics...).Result()

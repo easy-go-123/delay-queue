@@ -21,7 +21,7 @@ func NewNotifyDelayQueue(ctx context.Context, redisCli *redis.Client, bucketName
 	}
 
 	dq := NewDelayQueue(ctx, redisCli, bucketName, defaultimpl.NewNotifyReadyPool(maxCap),
-		defaultimpl.NewRedisJobPool(redisCli, jobPrefix), log)
+		defaultimpl.NewRedisJobPool(redisCli), log)
 
 	return NewNotifyDelayQueueWithDQ(ctx, dq, maxCap, log)
 }

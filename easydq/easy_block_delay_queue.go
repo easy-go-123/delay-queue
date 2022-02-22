@@ -15,7 +15,7 @@ func NewBlockRedisDQ(ctx context.Context, redisCli *redis.Client, bucketName str
 	log l.Wrapper) dqdef.BlockDelayQueue {
 	return &blockRedisDQImpl{
 		bdq: dq.NewBlockDelayQueueWithDQ(dq.NewDelayQueue(ctx, redisCli, bucketName, defaultimpl.NewRedisReadyQueue(ctx, redisCli),
-			defaultimpl.NewRedisJobPool(redisCli, bucketName+":job"), log)),
+			defaultimpl.NewRedisJobPool(redisCli), log)),
 	}
 }
 
@@ -23,7 +23,7 @@ func NewNoDataBlockRedisDQ(ctx context.Context, redisCli *redis.Client, bucketNa
 	log l.Wrapper) dqdef.BlockDelayQueue {
 	return &blockRedisDQImpl{
 		bdq: dq.NewBlockDelayQueueWithDQ(dq.NewDelayQueue(ctx, redisCli, bucketName, defaultimpl.NewRedisReadyQueue(ctx, redisCli),
-			defaultimpl.NewNoDataJobPool(redisCli, bucketName), log)),
+			defaultimpl.NewNoDataJobPool(redisCli), log)),
 	}
 }
 

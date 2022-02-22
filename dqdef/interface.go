@@ -13,8 +13,18 @@ type JobPool interface {
 	RemoveJob(ctx context.Context, jobID string) (err error)
 }
 
+type JobPoolManager interface {
+	JobPool
+	SetDelayQueueName(name string)
+}
+
 type ReadyPool interface {
 	NewReadyJob(topic, jobID string) (err error)
+}
+
+type ReadyPoolManager interface {
+	ReadyPool
+	SetDelayQueueName(name string)
 }
 
 type JobIdentify struct {

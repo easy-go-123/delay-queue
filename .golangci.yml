@@ -58,7 +58,6 @@ linters:
     - goconst           # 检查是否有重复的字符串应该替换成常量
 #    - gomnd             # 检查是否存在魔术数字
     - goprintffuncname  # 检查 Print 替换成 Printf
-    - ifshort           # 检查 if 语句是否可以用短句模式
     - importas          # 检查导入包的别名是否和包名一致
     - lll               # 检查代码一行长度是否超标
 #    - nakedret          # 查找复杂函数中的是否存在裸返回

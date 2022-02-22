@@ -27,7 +27,7 @@ func testMakeDelayQueue(ctx context.Context, t *testing.T) *delayQueueImpl {
 	redisCli.Del(ctx, "bucket1")
 
 	return NewDelayQueue(ctx, redisCli, "bucket1",
-		defaultimpl.NewRedisReadyQueue(ctx, redisCli), defaultimpl.NewRedisJobPool(redisCli, "job_"),
+		defaultimpl.NewRedisReadyQueue(ctx, redisCli), defaultimpl.NewRedisJobPool(redisCli),
 		l.NewWrapper(l.NewCommLogger(&l.FmtRecorder{}))).(*delayQueueImpl)
 }
 

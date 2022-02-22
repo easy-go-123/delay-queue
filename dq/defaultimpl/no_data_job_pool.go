@@ -10,16 +10,19 @@ import (
 
 const NoDataJobTopic = "__no_data_job__topic__"
 
-func NewNoDataJobPool(redisCli *redis.Client, jobPrefix string) dqdef.JobPool {
+func NewNoDataJobPool(redisCli *redis.Client) dqdef.JobPool {
 	return &noDataJobPoolImpl{
-		redisCli:  redisCli,
-		jobPrefix: jobPrefix,
+		redisCli: redisCli,
 	}
 }
 
 type noDataJobPoolImpl struct {
-	redisCli  *redis.Client
-	jobPrefix string
+	redisCli *redis.Client
+	dqName   string
+}
+
+func (impl *noDataJobPoolImpl) SetDelayQueueName(name string) {
+	impl.dqName = name
 }
 
 func (impl *noDataJobPoolImpl) SaveJob(ctx context.Context, job *dqdef.Job, afterHook func() error) (err error) {
@@ -65,5 +68,5 @@ func (impl *noDataJobPoolImpl) RemoveJob(ctx context.Context, jobID string) (err
 }
 
 func (impl *noDataJobPoolImpl) userRemovedJobSetRedisKey() string {
-	return "userDeletedJob:" + impl.jobPrefix
+	return "userDeletedJob:" + impl.dqName
 }
