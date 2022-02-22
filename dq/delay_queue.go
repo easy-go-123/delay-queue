@@ -170,13 +170,9 @@ func (dq *delayQueueImpl) processDelayQueueData(log l.Wrapper) (time.Duration, e
 			continue
 		}
 
-		if job.Delay.After(time.Now()) {
-			d := time.Until(job.Delay)
-			if d <= 0 {
-				d = time.Second
-			}
-
-			return d, nil
+		timeNow := time.Now()
+		if item.timestamp > timeNow.Unix() {
+			return time.Duration(item.timestamp-timeNow.Unix()) * time.Second, nil
 		}
 
 		err = dq.readyPool.NewReadyJob(job.Topic, job.ID)

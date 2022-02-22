@@ -138,7 +138,7 @@ func Test3(t *testing.T) {
 	err = dq.PushJob(&dqdef.Job{
 		Topic: defaultimpl.NoDataJobTopic,
 		ID:    "1:1",
-		Delay: time.Now().Add(time.Second),
+		Delay: time.Now().Add(time.Second * 2),
 	})
 	assert.Nil(t, err)
 
@@ -157,9 +157,19 @@ func Test3(t *testing.T) {
 	})
 	assert.NotNil(t, err)
 
+	timeStart := time.Now()
+
+	var timeEnd time.Time
+
 	ok, err := dq.BlockProcessJobOnce(func(job *dqdef.Job) (newJob *dqdef.Job, err error) {
+		timeEnd = time.Now()
+		assert.NotNil(t, job)
+		assert.True(t, job.ID == "1:1")
+		assert.True(t, job.Topic == defaultimpl.NoDataJobTopic)
+
 		return
 	}, time.Second*10, nil, defaultimpl.NoDataJobTopic)
 	assert.Nil(t, err)
 	assert.True(t, ok)
+	assert.True(t, timeEnd.Unix()-timeStart.Unix() >= 2)
 }
